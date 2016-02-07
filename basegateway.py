@@ -4,6 +4,17 @@ import json
 import sys
 
 class APIGateway(object):
+  '''
+  Requires the following to be defined by child classes:
+    self._host_url
+    self._api
+    self._common_params
+    self._common_headers
+
+    At a minimum, each key in self._api requires a hash with the following keys:
+      'method'
+      'path'
+  '''
   def __init__(self):
     self._protocol_status = []
 
@@ -22,11 +33,14 @@ class APIGateway(object):
       result = requests.post(self.api_full_path(api, **args), headers=self._common_headers, params=params, json=args.get('data'))
     elif self.method(api) == 'PUT':
       result = requests.put(self.api_full_path(api, **args), headers=self._common_headers, params=params, json=args.get('data'))
+    elif self.method(api) == 'DELETE':
+      result = requests.delete(self.api_full_path(api, **args), headers=self._common_headers, params=params, json=args.get('data'))
 
     ret = None
     status = None
     if result is not None:
-      ret = json.loads(result.text)
+      if result.text:
+        ret = json.loads(result.text)
       status = result.status_code
 
     if status is not None and \

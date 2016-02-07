@@ -2,13 +2,13 @@ from distutils.core import setup
 
 setup(
   name = 'basegateway',
-  version = '0.2',
-  py_modules = ['basegateway'],
+  version = '0.3',
+  py_modules = ['basegateway', 'oauth2gateway'],
   description = 'A base gateway to make api calls',
   author = 'Snapsheet',
   author_email = 'technotifications@snapsheet.me',
   url = 'https://github.com/bodyshopbidsdotcom/basegateway',
-  download_url = 'https://github.com/bodyshopbidsdotcom/basegateway/tarball/0.2',
+  download_url = 'https://github.com/bodyshopbidsdotcom/basegateway/tarball/0.3',
   keywords = ['api', 'gateway', 'http', 'REST'],
   install_requires = [
     'requests'
