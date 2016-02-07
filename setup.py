@@ -2,14 +2,17 @@ from distutils.core import setup
 
 setup(
   name = 'basegateway',
-  version = '0.1',
+  version = '0.2',
   py_modules = ['basegateway'],
   description = 'A base gateway to make api calls',
   author = 'Snapsheet',
   author_email = 'technotifications@snapsheet.me',
   url = 'https://github.com/bodyshopbidsdotcom/basegateway',
-  download_url = 'https://github.com/bodyshopbidsdotcom/basegateway/tarball/0.1',
+  download_url = 'https://github.com/bodyshopbidsdotcom/basegateway/tarball/0.2',
   keywords = ['api', 'gateway', 'http', 'REST'],
+  install_requires = [
+    'requests'
+  ],
   classifiers = [
     "Topic :: Internet :: WWW/HTTP",
     "Development Status :: 4 - Beta",
