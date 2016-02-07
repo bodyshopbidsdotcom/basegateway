@@ -1,0 +1,1 @@
+A base class to build specific gateways on top of
