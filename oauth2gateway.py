@@ -84,13 +84,14 @@ class OAuth2Gateway(APIGateway):
     self._oauth2_client_id
     self._oauth2_client_secret
   '''
-  def __init__(self):
+  def __init__(self, data_filepath=None):
     APIGateway.__init__(self)
     self._oauth2_gateway = None
     self._protocol_status.append(401)
     self._auth_info = {}
     self._httpd = None
     self._serverthread = None
+    self._data_filepath = data_filepath
 
   def call(self, api, **args):
     self._authenticate_client()
@@ -132,18 +133,12 @@ class OAuth2Gateway(APIGateway):
     self.update_common_headers(auth_info)
 
   def _get_auth_info(self):
-    filepath = self._get_auth_file_filepath()
     data = None
-    if os.path.isfile(filepath):
-      with open(filepath) as data_file:
+    if self._data_filepath is not None and os.path.isfile(self._data_filepath):
+      with open(self._data_filepath, 'r') as data_file:
         data = json.load(data_file)
 
     return data
-
-  def _get_auth_file_filepath(self):
-    data_file_dirpath = os.path.dirname(os.path.realpath(__file__))
-    data_file_filename = os.path.splitext(os.path.basename(__file__))[0] + '.json'
-    return data_file_dirpath + '/' + data_file_filename
 
   def _create_auth_info(self):
     webbrowser.open(self._oauth2_authorization_url + '?client_id={0}&response_type=code'.format(self._oauth2_client_id))
@@ -159,8 +154,9 @@ class OAuth2Gateway(APIGateway):
       'code': authentication_code
     })[0]
 
-    with open(self._get_auth_file_filepath(), 'w') as outfile:
-      json.dump(auth_info, outfile)
+    if self._data_filepath is not None:
+      with open(self._data_filepath, 'w') as outfile:
+        json.dump(auth_info, outfile)
 
     return auth_info
 
@@ -171,8 +167,9 @@ class OAuth2Gateway(APIGateway):
       'refresh_token': self._auth_info['refresh_token']
     })[0]
 
-    with open(self._get_auth_file_filepath(), 'w') as outfile:
-      json.dump(auth_info, outfile)
+    if self._data_filepath is not None:
+      with open(self._data_filepath, 'w') as outfile:
+        json.dump(auth_info, outfile)
 
     self._auth_info = auth_info
     self.update_common_headers(auth_info)
