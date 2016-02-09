@@ -84,7 +84,7 @@ class OAuth2Gateway(APIGateway):
     self._oauth2_client_id
     self._oauth2_client_secret
   '''
-  def __init__(self, data_filepath=None):
+  def __init__(self, data_filepath):
     APIGateway.__init__(self)
     self._oauth2_gateway = None
     self._protocol_status.append(401)
