@@ -143,7 +143,7 @@ class OAuth2Gateway(APIGateway):
   def _get_auth_file_filepath(self):
     data_file_dirpath = os.path.dirname(os.path.realpath(__file__))
     data_file_filename = os.path.splitext(os.path.basename(__file__))[0] + '.json'
-    return data_file_dirpath + '/data/' + data_file_filename
+    return data_file_dirpath + '/' + data_file_filename
 
   def _create_auth_info(self):
     webbrowser.open(self._oauth2_authorization_url + '?client_id={0}&response_type=code'.format(self._oauth2_client_id))
