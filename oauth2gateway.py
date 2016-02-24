@@ -84,11 +84,11 @@ class OAuth2Gateway(APIGateway):
     self._oauth2_client_id
     self._oauth2_client_secret
   '''
-  def __init__(self, data_filepath):
+  def __init__(self, data_filepath=None, auth_info=None):
     APIGateway.__init__(self)
     self._oauth2_gateway = None
     self._protocol_status.append(401)
-    self._auth_info = {}
+    self._auth_info = auth_info
     self._httpd = None
     self._serverthread = None
     self._data_filepath = data_filepath
@@ -119,26 +119,31 @@ class OAuth2Gateway(APIGateway):
         self._serverthread.join()
         self._serverthread = None
 
+  def get_auth_info(self):
+    data = self._auth_info
+    if (data is None) and (self._data_filepath is not None) and os.path.isfile(self._data_filepath):
+      with open(self._data_filepath, 'r') as data_file:
+        data = json.load(data_file)
+
+    return data
+
   def _get_oauth2_gateway(self):
     if self._oauth2_gateway is None:
       self._oauth2_gateway = _OAuth2Gateway(self._oauth2_url)
     return self._oauth2_gateway
 
   def _authenticate_client(self):
-    auth_info = self._get_auth_info()
+    auth_info = self.get_auth_info()
     if auth_info is None:
       auth_info = self._create_auth_info()
 
-    self._auth_info = auth_info
-    self.update_common_headers(auth_info)
+    self._set_auth_info(auth_info)
 
-  def _get_auth_info(self):
-    data = None
-    if self._data_filepath is not None and os.path.isfile(self._data_filepath):
-      with open(self._data_filepath, 'r') as data_file:
-        data = json.load(data_file)
-
-    return data
+  def _set_auth_info(self, new_auth_info):
+    if self._auth_info != new_auth_info:
+      self._dump_auth_info_to_file(new_auth_info)
+      self._auth_info = new_auth_info
+      self.update_common_headers(new_auth_info)
 
   def _create_auth_info(self):
     webbrowser.open(self._oauth2_authorization_url + '?client_id={0}&response_type=code'.format(self._oauth2_client_id))
@@ -154,22 +159,18 @@ class OAuth2Gateway(APIGateway):
       'code': authentication_code
     })[0]
 
-    if self._data_filepath is not None:
-      with open(self._data_filepath, 'w') as outfile:
-        json.dump(auth_info, outfile)
-
     return auth_info
 
   def _refresh_client_authentication(self):
     auth_info = self._get_oauth2_gateway().call('refresh_token', params={
       'client_id': self._oauth2_client_id,
       'client_secret': self._oauth2_client_secret,
-      'refresh_token': self._auth_info['refresh_token']
+      'refresh_token': self.get_auth_info()['refresh_token']
     })[0]
 
+    self._set_auth_info(auth_info)
+
+  def _dump_auth_info_to_file(self, auth_info):
     if self._data_filepath is not None:
       with open(self._data_filepath, 'w') as outfile:
         json.dump(auth_info, outfile)
-
-    self._auth_info = auth_info
-    self.update_common_headers(auth_info)
