@@ -86,12 +86,16 @@ class OAuth2Gateway(APIGateway):
   '''
   def __init__(self, data_filepath=None, auth_info=None):
     APIGateway.__init__(self)
+    self._common_params = {}
+    self._common_headers = {}
     self._oauth2_gateway = None
     self._protocol_status.append(401)
-    self._auth_info = auth_info
     self._httpd = None
     self._serverthread = None
     self._data_filepath = data_filepath
+    self._auth_info = None
+    if auth_info is not None:
+     self._set_auth_info(auth_info)
 
   def call(self, api, **args):
     self._authenticate_client()
