@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-CURRENT_VERSION = '0.9'
+CURRENT_VERSION = '0.10'
 
 setup(
   name = 'basegateway',

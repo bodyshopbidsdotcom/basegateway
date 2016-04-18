@@ -35,6 +35,8 @@ class APIGateway(object):
       result = requests.put(self.api_full_path(api, **args), headers=self._common_headers, params=params, json=args.get('data'))
     elif self.method(api) == 'DELETE':
       result = requests.delete(self.api_full_path(api, **args), headers=self._common_headers, params=params, json=args.get('data'))
+    elif self.method(api) == 'PATCH':
+      result = requests.patch(self.api_full_path(api, **args), headers=self._common_headers, params=params, json=args.get('data'))
 
     ret = None
     status = None
