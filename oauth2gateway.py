@@ -150,7 +150,7 @@ class OAuth2Gateway(APIGateway):
       self._auth_info = new_auth_info
       self.update_common_headers(new_auth_info)
       if self._tokens_updater is not None:
-        self._tokens_updater.new_tokens(refresh_token = auth_info.get('refresh_token'), access_token = auth_info.get('access_token'))
+        self._tokens_updater.new_tokens(refresh_token = new_auth_info.get('refresh_token'), access_token = new_auth_info.get('access_token'))
 
   def _create_auth_info(self):
     webbrowser.open(self._oauth2_authorization_url + '?client_id={0}&response_type=code'.format(self._oauth2_client_id))
