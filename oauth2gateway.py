@@ -84,7 +84,7 @@ class OAuth2Gateway(APIGateway):
     self._oauth2_client_id
     self._oauth2_client_secret
   '''
-  def __init__(self, data_filepath=None, auth_info=None):
+  def __init__(self, data_filepath=None, auth_info=None, tokens_updater=None):
     APIGateway.__init__(self)
     self._common_params = {}
     self._common_headers = {}
@@ -94,6 +94,7 @@ class OAuth2Gateway(APIGateway):
     self._serverthread = None
     self._data_filepath = data_filepath
     self._auth_info = None
+    self._tokens_updater = tokens_updater
     if auth_info is not None:
      self._set_auth_info(auth_info)
 
@@ -148,6 +149,8 @@ class OAuth2Gateway(APIGateway):
       self._dump_auth_info_to_file(new_auth_info)
       self._auth_info = new_auth_info
       self.update_common_headers(new_auth_info)
+      if self._tokens_updater is not None:
+        self._tokens_updater.new_tokens(refresh_token = auth_info.get('refresh_token'), access_token = auth_info.get('access_token'))
 
   def _create_auth_info(self):
     webbrowser.open(self._oauth2_authorization_url + '?client_id={0}&response_type=code'.format(self._oauth2_client_id))
