@@ -13,7 +13,7 @@ setup(
   download_url = 'https://github.com/bodyshopbidsdotcom/basegateway/tarball/{0}'.format(CURRENT_VERSION),
   keywords = ['api', 'gateway', 'http', 'REST'],
   install_requires = [
-    'requests==2.9.1'
+    'requests>=2.20.1'
   ],
   classifiers = [
     "Topic :: Internet :: WWW/HTTP",
